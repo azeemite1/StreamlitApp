@@ -1,5 +1,5 @@
 import streamlit as st
-import plotly.express as px
+import plotly.graph_objects as go
 import pandas as pd
 
 # Create a dictionary with the data
@@ -24,9 +24,38 @@ st.title('Interactive Scatter Plot App')
 # Dropdown to select the pair of I2 Lab and Halden values
 pair = st.selectbox('Select the pair of I2 Lab and Halden values:', ['1', '2', '3', '4'])
 
-# Plotting the selected pair
-fig = px.scatter(df, x='Well ID', y=[f'I2 Lab {pair}', f'Halden {pair}'], 
-                 labels={'value': 'Measurement', 'variable': 'Type'},
-                 title=f'Scatter Plot of I2 Lab {pair} vs Halden {pair} Values')
+# Prepare data for plotting
+i2_lab_col = f'I2 Lab {pair}'
+halden_col = f'Halden {pair}'
 
+# Create the scatter plot using plotly.graph_objects
+fig = go.Figure()
+
+# Add I2 Lab data
+fig.add_trace(go.Scatter(
+    x=df['Well ID'],
+    y=df[i2_lab_col],
+    mode='markers',
+    name=f'I2 Lab {pair}',
+    marker=dict(color='red')
+))
+
+# Add Halden data
+fig.add_trace(go.Scatter(
+    x=df['Well ID'],
+    y=df[halden_col],
+    mode='markers',
+    name=f'Halden {pair}',
+    marker=dict(color='blue')
+))
+
+# Update layout
+fig.update_layout(
+    title=f'Scatter Plot of I2 Lab {pair} vs Halden {pair} Values',
+    xaxis_title='Well ID',
+    yaxis_title='Measurement',
+    legend_title='Type'
+)
+
+# Show the plot in Streamlit
 st.plotly_chart(fig)
